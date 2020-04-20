@@ -1,1 +1,10 @@
+We have used faster RCNN inception_v2 model , we trained 25 hours on gpu ( 250k step ) , using batch size of 1 
 
+--Accuracy at 0.5 IOU :
+average precision (Gun)      = 0.973162
+average precision (Knife)    = 0.901536
+average precision (Pliers)   = 0.931210
+average precision (Scissors) = 0.886818
+average precision (Wrench)   = 0.847684
+
+Mean average precision (mAP) = 0.907677
