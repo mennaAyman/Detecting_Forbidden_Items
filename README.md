@@ -5,7 +5,7 @@
 ##
 # Brief Summary
 
-This repository is a tutorial for how to use TensorFlow&#39;s Object Detection API to train an object detection classifier for multiple objects on Windows or Linux. It is written using _TensorFlow v1.14_
+This repository aims to use TensorFlow&#39;s Object Detection API to train an object detection classifier for multiple objects on Windows or Linux. It is written using _TensorFlow v1.14_ ( required , because tf v2.x don't have some important functions for this repository )
 
 This readme describes every step required to get going with your own object detection classifier:
 
@@ -17,8 +17,9 @@ This readme describes every step required to get going with your own object dete
 6. [Training]
 7. [Exporting the inference graph]
 8. [Testingthe model]
+9. [Evaluating the model]
 
-The repository provides all the files needed to train &quot;detecting forbidden items&quot; . The tutorial describes how to replace these files with your own files to train a detection classifier for whatever any other model. It also has Python scripts to test your classifier out on an image, video, or webcam feed.
+The repository provides all the files needed to train &quot;detecting forbidden items&quot; . It describes how to replace these files with your own files to train a detection classifier for whatever any other model. It also has Python scripts to test your classifier out on an image or video.
 
 <p align="center">
   <img src="docs/header.jpg">
@@ -27,7 +28,7 @@ The repository provides all the files needed to train &quot;detecting forbidden 
 ##
 # Introduction
 
-The purpose of this is to explain how to train your own convolutional neural network object detection classifier for multiple objects. At the end, you will have a program that can identify and draw boxes around specific objects in pictures, videos, or in a webcam feed.
+The purpose of this is to explain how to train your own convolutional neural network object detection classifier for multiple objects. At the end, you will have a program that can identify and draw boxes around specific objects in pictures or videos.
 
 We used TensorFlow-GPU v1.14 . TensorFlow-GPU allows your PC to use the video card to provide extra processing power while training. Using TensorFlow-GPU instead of regular TensorFlow reduces training time by a factor of about 8. The CPU-only version of TensorFlow can also be used, but it will take longer. If you use CPU-only TensorFlow, you do not need to install CUDA and cuDNN in Step 1.
 
@@ -84,30 +85,33 @@ If you want to train your own object detector, delete the following files (do no
 Now, you are ready to start from scratch in training your own object detector. This tutorial will assume that all the files listed above were deleted, and will go on to explain how to generate the files for your own training dataset.
 
 #### 2d. Install necessary packages
+```
+C:\> pip install tensorflow==1.14
 
-C:\\&gt; pip install tensorflow==1.14
+C:\> pip install pillow
 
-C:\\&gt; pip install pillow
+C:\> pip install lxml
 
-C:\\&gt; pip install lxml
+C:\> pip install Cython
 
-C:\\&gt; pip install Cython
+C:\> pip install contextlib2
 
-C:\\&gt; pip install contextlib2
+C:\> pip install jupyter
 
-C:\\&gt; pip install jupyter
+C:\> pip install matplotlib
 
-C:\\&gt; pip install matplotlib
+C:\> pip install pandas
 
-C:\\&gt; pip install pandas
-
-C:\\&gt; pip install opencv
+C:\> pip install opencv
+```
 
 #### 2e. Configure PYTHONPATH environment variable
 
 A PYTHONPATH variable must be created that points to the \models, \models\research, and \models\research\slim directories. Do this by issuing the following commands (from any directory):
 
-C:\\&gt; set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensorflow\models\research\slim
+```
+C:\> set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensorflow\models\research\slim
+```
 
 (Note: Every time the &quot;tensorflow&quot; virtual environment is exited, the PYTHONPATH variable is reset and needs to be set up again. You can use &quot;echo %PYTHONPATH% to see if it has been set or not.)
 
@@ -115,25 +119,33 @@ C:\\&gt; set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\te
 
 Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately, the short protoc compilation command posted on TensorFlow&#39;s Object Detection API [installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) does not work on Windows. Every .proto file in the \object\_detection\protos directory must be called out individually by the command.
 
-C:\\&gt; cd C:\tensorflow\models\research
+```
+C:\> cd C:\tensorflow\models\research
+```
 
 Then copy and paste the following command into the command line and press Enter:
 
-protoc --python\_out=. .\object\_detection\protos\anchor\_generator.proto
+```
+protoc --python_out=. .\object_detection\protos\anchor_generator.proto
+```
 
 This creates a .py file from every .proto file in the \object\_detection\protos folder.
 
 Finally, run the following commands from the C:\tensorflow\models\research directory:
 
-C:\tensorflow\models\research\&gt; python setup.py build
+```
+C:\tensorflow\models\research> python setup.py build
 
-C:\tensorflow\models\research\&gt; python setup.py install
+C:\tensorflow\models\research> python setup.py install
+```
 
 #### 2g. Test TensorFlow setup to verify it works
 
 Run following command to check:
 
-python C:/tensorflow/models/research/object\_detection/builders/model\_builder\_test.py
+```
+python C:/tensorflow/models/research/object_detection/builders/model_builder_test.py
+```
 
 ### 3. Gather and Label Pictures
 
@@ -151,11 +163,17 @@ Make a new folder in C:\tensorflow\models\research\object\_detection and name it
 
 ### 4. Generate Training Data
 
+<p align="center">
+  <img src="docs/block.jpeg">
+</p>
+
 With the images labeled, it&#39;s time to generate the TFRecords that serve as input data to the TensorFlow training model. We will use the xml\_to\_csv.py and generate\_tfrecord.py scripts from [Dat Tran&#39;s Raccoon Detector dataset](https://github.com/datitran/raccoon_dataset), with some slight modifications to work with our directory structure.
 
 First, the image .xml data will be used to create .csv files containing all the data for the train and test images. From the \object\_detection folder, run this command :
 
-C:\tensorflow\models\research\object\_detection\&gt; python xml\_to\_csv.py
+```
+C:\tensorflow\models\research\object_detection> python xml_to_csv.py
+```
 
 This creates a train\_labels.csv and test\_labels.csv file in the \object\_detection\images folder.
 
@@ -165,37 +183,30 @@ We replaced the classes the following code in generate\_tfrecord.py:
 
 &quot; You give each class a unique return value&quot;
 
-def class\_text\_to\_int(row\_label):
-
-if row\_label == &#39;Knife&#39;:
-
-return 1
-
-elif row\_label == &#39;Gun&#39;:
-
-return 2
-
-elif row\_label == &#39;Wrench&#39;:
-
-return 3
-
-elif row\_label == &#39;Pliers&#39;:
-
-return 4
-
-elif row\_label == &#39;Scissors&#39;:
-
-return 5
-
-else:
-
-return None
+```
+def class_text_to_int(row_label):
+    if row_label == 'Knife':
+        return 1
+    elif row_label == 'Gun':
+        return 2
+    elif row_label == 'Wrench':
+        return 3
+    elif row_label == 'Pliers':
+        return 4
+    elif row_label == 'Scissors':
+        return 5
+    else:
+        return None
+```
 
 Then, generate the TFRecord files by issuing these commands from the \object\_detection folder:
 
-python generate\_tfrecord.py --csv\_input=images\train\_labels.csv --image\_dir=images\train --output\_path=train.record
-
-python generate\_tfrecord.py --csv\_input=images\test\_labels.csv --image\_dir=images\test --output\_path=test.record
+```
+python generate_tfrecord.py --csv_input=images\train_labels.csv --image_dir=images\train --output_path=train.record
+```
+```
+python generate_tfrecord.py --csv_input=images\test_labels.csv --image_dir=images\test --output_path=test.record
+```
 
 These generate a train.record and a test.record file in \object\_detection. These will be used to train the new object detection classifier.
 
@@ -207,45 +218,28 @@ The last thing to do before training is to create a label map and edit the train
 
 The label map tells the trainer what each object is by defining a mapping of class names to class ID numbers. Use a text editor to create a new file and save it as labelmap.pbtxt in the C:\tensorflow\models\research\object\_detection\training folder.:
 
+```
 item {
-
-id: 1
-
-name: &#39;Knife&#39;
-
+    id: 1
+    name: 'Knife'
 }
-
 item {
-
-id: 2
-
-name: &#39;Gun&#39;
-
+    id: 2
+    name: 'Gun'
 }
-
 item {
-
-id: 3
-
-name: &#39;Wrench&#39;
-
+    id: 3
+    name: 'Wrench'
 }
-
 item {
-
-id: 4
-
-name: &#39;Pliers&#39;
-
+    id: 4
+    name: 'Pliers'
 }
-
 item {
-
-id: 5
-
-name: &#39;Scissors&#39;
-
+    id: 5
+    name: 'Scissors'
 }
+```
 
 #### 5b. Configure training
 
@@ -272,7 +266,9 @@ Save the file after the changes have been made. That&#39;s it! The training job 
 
 From the \object\_detection directory, issue the following command to begin training:
 
-python train.py --logtostderr --train\_dir=training/ --pipeline\_config\_path=training/faster\_rcnn\_inception\_v2\_pets.config
+```
+python train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/faster_rcnn_inception_v2_pets.config
+```
 
 If everything has been set up correctly, TensorFlow will initialize the training. The initialization can take some time before the actual training begins. When training begins, it will look like this:
 
@@ -284,7 +280,9 @@ Each step of training reports the loss. It will start high and get lower and low
 
 You can view the progress of the training job by using TensorBoard. To do this, open a new Prompt , change directory to the C:\tensorflow\models\research\object\_detection directory, and issue the following command:
 
-C:\tensorflow\models\research\object\_detection\&gt;tensorboard --logdir=training
+```
+C:\tensorflow\models\research\object_detection>tensorboard --logdir=training
+```
 
 This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
 
@@ -298,18 +296,48 @@ The training routine periodically saves checkpoints about every five minutes. Yo
 
 Now that training is complete, the last step is to generate the frozen inference graph (.pb file). From the \object\_detection folder, issue the following command, where &quot;XXXX&quot; in &quot;model.ckpt-XXXX&quot; should be replaced with the highest-numbered .ckpt file in the training folder , for us 250000
 
-python export\_inference\_graph.py --input\_type image\_tensor --pipeline\_config\_path training/faster\_rcnn\_inception\_v2\_pets.config --trained\_checkpoint\_prefix training/model.ckpt-250000 --output\_directory inference\_graph
+```
+python export_inference_graph.py --input_type image_tensor --pipeline_config_path training/faster_rcnn_inception_v2_pets.config --trained_checkpoint_prefix training/model.ckpt-250000 --output_directory inference_graph
+```
 
 This creates a frozen\_inference\_graph.pb file in the \object\_detection\inference\_graph folder. The .pb file contains the object detection classifier.
 
 ### 8. Test the model
 
-The object detection classifier is all ready to go , and there is two notebooks to test on images and videos
+The object detection classifier is all ready to go , and there is two notebooks to test images and videos
 
+sample after testing
 <p align="center">
   <img src="docs/2.jpg">
 </p>
 
 <p align="center">
   <img src="docs/3.jpg">
+</p>
+
+
+### 9. Evaluating the model
+
+The final step is to evaluate the trained model saved in training/ directory. We have to use eval.py file and can evaluate using following command:
+
+```
+python eval.py --logtostderr --pipeline_config_path=training/faster_rcnn_inception_v2_pets.config --checkpoint_dir=training/ --eval_dir=eval/
+```
+
+we will get the mean average precision
+
+average precision (Gun)      = 0.973162
+
+average precision (Knife)    = 0.901536
+
+average precision (Pliers)   = 0.931210
+
+average precision (Scissors) = 0.886818
+
+average precision (Wrench)   = 0.847684
+
+Mean average precision (mAP) = 0.907677
+
+<p align="center">
+  <img src="docs/eval.png">
 </p>
