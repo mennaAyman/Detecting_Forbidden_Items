@@ -5,7 +5,7 @@
 ##
 # Brief Summary
 
-This repository aims to use TensorFlow&#39;s Object Detection API to train an object detection classifier for multiple objects on Windows or Linux. It is written using _TensorFlow v1.14_
+This repository aims to use TensorFlow&#39;s Object Detection API to train an object detection classifier for multiple objects on Windows or Linux. It is written using _TensorFlow v1.14_ ( required , because tf v2.x don't have some important functions for this repository )
 
 This readme describes every step required to get going with your own object detection classifier:
 
