@@ -277,7 +277,7 @@ python train.py --logtostderr --train\_dir=training/ --pipeline\_config\_path=tr
 If everything has been set up correctly, TensorFlow will initialize the training. The initialization can take some time before the actual training begins. When training begins, it will look like this:
 
 <p align="center">
-  <img src="docs/training.png">
+  <img src="docs/training.jpg">
 </p>
 
 Each step of training reports the loss. It will start high and get lower and lower as training progresses. The loss numbers will be different if a different model is used.
@@ -289,7 +289,7 @@ C:\tensorflow\models\research\object\_detection\&gt;tensorboard --logdir=trainin
 This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
 
 <p align="center">
-  <img src="docs/loss.jpg">
+  <img src="docs/loss.png">
 </p>
 
 The training routine periodically saves checkpoints about every five minutes. You can terminate the training by pressing Ctrl+C while in the command prompt window. You can terminate training and start it later, and it will restart from the last saved checkpoint. The checkpoint at the highest number of steps will be used to generate the frozen inference graph.
