@@ -1,0 +1,4 @@
+1-install object detection api
+2-use tensorflow version 1.14 or 1.15 (Don't use version 2)
+3-make a folder contains ( training folder , inference graph folder , images for testing folder , image notebook )
+4-open jupyter notebook and run (image notebook)
