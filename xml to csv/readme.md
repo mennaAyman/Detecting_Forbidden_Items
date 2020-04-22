@@ -6,6 +6,6 @@ These files may sometimes be called Character Separated Values or Comma Delimite
 
 The imported data could be used in several ways such as producing visualizations, descriptive statistics, predictive modeling, or simply for cleaning and preprocessing.
 
-The csv file in our project should look like that:
+The csv file in our project should look like this:
 
 ![](https://github.com/mennaAyman/Detecting_Forbidden_Items/blob/master/xml%20to%20csv/csv.png)
