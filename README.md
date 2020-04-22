@@ -17,6 +17,7 @@ This readme describes every step required to get going with your own object dete
 6. [Training]
 7. [Exporting the inference graph]
 8. [Testingthe model]
+9. [Evaluating the model]
 
 The repository provides all the files needed to train &quot;detecting forbidden items&quot; . It describes how to replace these files with your own files to train a detection classifier for whatever any other model. It also has Python scripts to test your classifier out on an image or video.
 
@@ -85,23 +86,23 @@ Now, you are ready to start from scratch in training your own object detector. T
 
 #### 2d. Install necessary packages
 ```
-C:\\&gt; pip install tensorflow==1.14
+C:\> pip install tensorflow==1.14
 
-C:\\&gt; pip install pillow
+C:\> pip install pillow
 
-C:\\&gt; pip install lxml
+C:\> pip install lxml
 
-C:\\&gt; pip install Cython
+C:\> pip install Cython
 
-C:\\&gt; pip install contextlib2
+C:\> pip install contextlib2
 
-C:\\&gt; pip install jupyter
+C:\> pip install jupyter
 
-C:\\&gt; pip install matplotlib
+C:\> pip install matplotlib
 
-C:\\&gt; pip install pandas
+C:\> pip install pandas
 
-C:\\&gt; pip install opencv
+C:\> pip install opencv
 ```
 
 #### 2e. Configure PYTHONPATH environment variable
@@ -109,7 +110,7 @@ C:\\&gt; pip install opencv
 A PYTHONPATH variable must be created that points to the \models, \models\research, and \models\research\slim directories. Do this by issuing the following commands (from any directory):
 
 ```
-C:\\&gt; set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensorflow\models\research\slim
+C:\> set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensorflow\models\research\slim
 ```
 
 (Note: Every time the &quot;tensorflow&quot; virtual environment is exited, the PYTHONPATH variable is reset and needs to be set up again. You can use &quot;echo %PYTHONPATH% to see if it has been set or not.)
@@ -119,7 +120,7 @@ C:\\&gt; set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\te
 Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately, the short protoc compilation command posted on TensorFlow&#39;s Object Detection API [installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) does not work on Windows. Every .proto file in the \object\_detection\protos directory must be called out individually by the command.
 
 ```
-C:\\&gt; cd C:\tensorflow\models\research
+C:\> cd C:\tensorflow\models\research
 ```
 
 Then copy and paste the following command into the command line and press Enter:
@@ -131,16 +132,18 @@ This creates a .py file from every .proto file in the \object\_detection\protos 
 Finally, run the following commands from the C:\tensorflow\models\research directory:
 
 ```
-C:\tensorflow\models\research\&gt; python setup.py build
+C:\tensorflow\models\research> python setup.py build
 
-C:\tensorflow\models\research\&gt; python setup.py install
+C:\tensorflow\models\research> python setup.py install
 ```
 
 #### 2g. Test TensorFlow setup to verify it works
 
 Run following command to check:
 
+```
 python C:/tensorflow/models/research/object\_detection/builders/model\_builder\_test.py
+```
 
 ### 3. Gather and Label Pictures
 
@@ -167,7 +170,7 @@ With the images labeled, it&#39;s time to generate the TFRecords that serve as i
 First, the image .xml data will be used to create .csv files containing all the data for the train and test images. From the \object\_detection folder, run this command :
 
 ```
-C:\tensorflow\models\research\object\_detection\&gt; python xml\_to\_csv.py
+C:\tensorflow\models\research\object\_detection> python xml\_to\_csv.py
 ```
 
 This creates a train\_labels.csv and test\_labels.csv file in the \object\_detection\images folder.
@@ -179,31 +182,20 @@ We replaced the classes the following code in generate\_tfrecord.py:
 &quot; You give each class a unique return value&quot;
 
 ```
-def class\_text\_to\_int(row\_label):
+def class_text_to_int(row_label):
+    if row_label == 'Knife':
+        return 1
+    elif row_label == 'Gun':
+        return 2
+    elif row_label == 'Wrench':
+        return 3
+    elif row_label == 'Pliers':
+        return 4
+    elif row_label == 'Scissors':
+        return 5
+    else:
+        return None
 
-if row\_label == &#39;Knife&#39;:
-
-return 1
-
-elif row\_label == &#39;Gun&#39;:
-
-return 2
-
-elif row\_label == &#39;Wrench&#39;:
-
-return 3
-
-elif row\_label == &#39;Pliers&#39;:
-
-return 4
-
-elif row\_label == &#39;Scissors&#39;:
-
-return 5
-
-else:
-
-return None
 ```
 
 Then, generate the TFRecord files by issuing these commands from the \object\_detection folder:
@@ -227,44 +219,26 @@ The label map tells the trainer what each object is by defining a mapping of cla
 
 ```
 item {
-
-id: 1
-
-name: &#39;Knife&#39;
-
+    id: 1
+    name: 'Knife'
 }
-
 item {
-
-id: 2
-
-name: &#39;Gun&#39;
-
+    id: 2
+    name: 'Gun'
 }
-
 item {
-
-id: 3
-
-name: &#39;Wrench&#39;
-
+    id: 3
+    name: 'Wrench'
 }
-
 item {
-
-id: 4
-
-name: &#39;Pliers&#39;
-
+    id: 4
+    name: 'Pliers'
 }
-
 item {
-
-id: 5
-
-name: &#39;Scissors&#39;
-
+    id: 5
+    name: 'Scissors'
 }
+
 ```
 
 #### 5b. Configure training
@@ -305,7 +279,7 @@ Each step of training reports the loss. It will start high and get lower and low
 You can view the progress of the training job by using TensorBoard. To do this, open a new Prompt , change directory to the C:\tensorflow\models\research\object\_detection directory, and issue the following command:
 
 ```
-C:\tensorflow\models\research\object\_detection\&gt;tensorboard --logdir=training
+C:\tensorflow\models\research\object\_detection>tensorboard --logdir=training
 ```
 
 This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
@@ -350,10 +324,14 @@ python eval.py --logtostderr --pipeline_config_path=training/faster_rcnn_incepti
 
 we will get the mean average precision
 
-average precision (Gun)        = 0.973162
-average precision (Knife)       = 0.901536
-average precision (Pliers)      = 0.931210
+average precision (Gun)      = 0.973162
+
+average precision (Knife)    = 0.901536
+
+average precision (Pliers)   = 0.931210
+
 average precision (Scissors) = 0.886818
+
 average precision (Wrench)   = 0.847684
 
 Mean average precision (mAP) = 0.907677
