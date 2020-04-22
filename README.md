@@ -125,7 +125,9 @@ C:\> cd C:\tensorflow\models\research
 
 Then copy and paste the following command into the command line and press Enter:
 
-protoc --python\_out=. .\object\_detection\protos\anchor\_generator.proto
+```
+protoc --python_out=. .\object_detection\protos\anchor_generator.proto
+```
 
 This creates a .py file from every .proto file in the \object\_detection\protos folder.
 
@@ -142,7 +144,7 @@ C:\tensorflow\models\research> python setup.py install
 Run following command to check:
 
 ```
-python C:/tensorflow/models/research/object\_detection/builders/model\_builder\_test.py
+python C:/tensorflow/models/research/object_detection/builders/model_builder_test.py
 ```
 
 ### 3. Gather and Label Pictures
@@ -170,7 +172,7 @@ With the images labeled, it&#39;s time to generate the TFRecords that serve as i
 First, the image .xml data will be used to create .csv files containing all the data for the train and test images. From the \object\_detection folder, run this command :
 
 ```
-C:\tensorflow\models\research\object\_detection> python xml\_to\_csv.py
+C:\tensorflow\models\research\object_detection> python xml_to_csv.py
 ```
 
 This creates a train\_labels.csv and test\_labels.csv file in the \object\_detection\images folder.
@@ -195,16 +197,15 @@ def class_text_to_int(row_label):
         return 5
     else:
         return None
-
 ```
 
 Then, generate the TFRecord files by issuing these commands from the \object\_detection folder:
 
 ```
-python generate\_tfrecord.py --csv\_input=images\train\_labels.csv --image\_dir=images\train --output\_path=train.record
+python generate_tfrecord.py --csv_input=images\train_labels.csv --image_dir=images\train --output_path=train.record
 ```
 ```
-python generate\_tfrecord.py --csv\_input=images\test\_labels.csv --image\_dir=images\test --output\_path=test.record
+python generate_tfrecord.py --csv_input=images\test_labels.csv --image_dir=images\test --output_path=test.record
 ```
 
 These generate a train.record and a test.record file in \object\_detection. These will be used to train the new object detection classifier.
@@ -238,7 +239,6 @@ item {
     id: 5
     name: 'Scissors'
 }
-
 ```
 
 #### 5b. Configure training
@@ -266,7 +266,9 @@ Save the file after the changes have been made. That&#39;s it! The training job 
 
 From the \object\_detection directory, issue the following command to begin training:
 
-python train.py --logtostderr --train\_dir=training/ --pipeline\_config\_path=training/faster\_rcnn\_inception\_v2\_pets.config
+```
+python train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/faster_rcnn_inception_v2_pets.config
+```
 
 If everything has been set up correctly, TensorFlow will initialize the training. The initialization can take some time before the actual training begins. When training begins, it will look like this:
 
@@ -279,7 +281,7 @@ Each step of training reports the loss. It will start high and get lower and low
 You can view the progress of the training job by using TensorBoard. To do this, open a new Prompt , change directory to the C:\tensorflow\models\research\object\_detection directory, and issue the following command:
 
 ```
-C:\tensorflow\models\research\object\_detection>tensorboard --logdir=training
+C:\tensorflow\models\research\object_detection>tensorboard --logdir=training
 ```
 
 This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
@@ -295,7 +297,7 @@ The training routine periodically saves checkpoints about every five minutes. Yo
 Now that training is complete, the last step is to generate the frozen inference graph (.pb file). From the \object\_detection folder, issue the following command, where &quot;XXXX&quot; in &quot;model.ckpt-XXXX&quot; should be replaced with the highest-numbered .ckpt file in the training folder , for us 250000
 
 ```
-python export\_inference\_graph.py --input\_type image\_tensor --pipeline\_config\_path training/faster\_rcnn\_inception\_v2\_pets.config --trained\_checkpoint\_prefix training/model.ckpt-250000 --output\_directory inference\_graph
+python export_inference_graph.py --input_type image_tensor --pipeline_config_path training/faster_rcnn_inception_v2_pets.config --trained_checkpoint_prefix training/model.ckpt-250000 --output_directory inference_graph
 ```
 
 This creates a frozen\_inference\_graph.pb file in the \object\_detection\inference\_graph folder. The .pb file contains the object detection classifier.
