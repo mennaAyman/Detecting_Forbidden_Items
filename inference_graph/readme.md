@@ -11,4 +11,7 @@ After saving the model there will be some usefull files such as:
 3- tensorflowModel.ckpt.index: It is a table where Each key is the name of a tensor and its value is a serialized BundleEntryProto.
 serialized BundleEntryProto holds metadata of the tensors. Metadata of a tensor may be like: which of the “data” files contains the content of a tensor, the offset into that file, checksum, some auxiliary data, etc.
 
-4- checkpoint:All checkpoint information, like model ckpt file name and path
+4- checkpoint:All checkpoint information, like model ckpt file name and path.
+
+5- Freezing the graph:
+When we need to keep all the values of the variables and the Graph in a single file we do it with freezing the graphs.
