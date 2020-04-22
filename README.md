@@ -1,6 +1,7 @@
 ##
 # **How To Train an Object Detection Classifier for Multiple Objects Using TensorFlow (GPU)**
-
+##
+# Forbidden Items Detection
 ##
 # Brief Summary
 
@@ -19,7 +20,9 @@ This readme describes every step required to get going with your own object dete
 
 The repository provides all the files needed to train &quot;detecting forbidden items&quot; . The tutorial describes how to replace these files with your own files to train a detection classifier for whatever any other model. It also has Python scripts to test your classifier out on an image, video, or webcam feed.
 
-![](RackMultipart20200422-4-4xfm8w_html_d7833a5ee0f15120.jpg)
+<p align="center">
+  <img src="docs/header.jpg">
+</p>
 
 ##
 # Introduction
@@ -55,7 +58,9 @@ Download the full TensorFlow object detection repository located at [https://git
 
 TensorFlow provides several object detection models (pre-trained classifiers with specific neural network architectures) in its [model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). Some models (such as the SSD-MobileNet model) have an architecture that allows for faster detection but with less accuracy, while some models (such as the Faster-RCNN model) give slower detection but with more accuracy. I initially started with the ssd\_inception\_V2\_coco model, but it didn&#39;t do a very good job identifying images. I re-trained my detector on the Faster-RCNN-Inception-V2 model, and the detection worked considerably better, but with a noticeably slower speed.
 
-![](RackMultipart20200422-4-4xfm8w_html_e2385d3e1da394ee.jpg) ![](RackMultipart20200422-4-4xfm8w_html_f78c39da8dd2a4bf.jpg)
+<p align="center">
+  <img src="docs/1.jpg">
+</p>
 
 You can choose which model to train your objection detection classifier on. If you are planning on using the object detector on a device with low computational power, use the SDD-MobileNet model. If you will be running your detector on a decently powered laptop or desktop PC, use one of the Faster RCNN models.
 
@@ -271,7 +276,9 @@ python train.py --logtostderr --train\_dir=training/ --pipeline\_config\_path=tr
 
 If everything has been set up correctly, TensorFlow will initialize the training. The initialization can take some time before the actual training begins. When training begins, it will look like this:
 
-![](RackMultipart20200422-4-4xfm8w_html_83a74bb4df2efa2f.jpg)
+<p align="center">
+  <img src="docs/training.jpg">
+</p>
 
 Each step of training reports the loss. It will start high and get lower and lower as training progresses. The loss numbers will be different if a different model is used.
 
@@ -281,7 +288,9 @@ C:\tensorflow\models\research\object\_detection\&gt;tensorboard --logdir=trainin
 
 This will create a webpage on your local machine at YourPCName:6006, which can be viewed through a web browser. The TensorBoard page provides information and graphs that show how the training is progressing. One important graph is the Loss graph, which shows the overall loss of the classifier over time.
 
-![](RackMultipart20200422-4-4xfm8w_html_3d42c4657c30c240.png)
+<p align="center">
+  <img src="docs/loss.png">
+</p>
 
 The training routine periodically saves checkpoints about every five minutes. You can terminate the training by pressing Ctrl+C while in the command prompt window. You can terminate training and start it later, and it will restart from the last saved checkpoint. The checkpoint at the highest number of steps will be used to generate the frozen inference graph.
 
@@ -297,4 +306,10 @@ This creates a frozen\_inference\_graph.pb file in the \object\_detection\infere
 
 The object detection classifier is all ready to go , and there is two notebooks to test on images and videos
 
-![](RackMultipart20200422-4-4xfm8w_html_e2385d3e1da394ee.jpg) ![](RackMultipart20200422-4-4xfm8w_html_46f96ac8c9df2871.jpg)
+<p align="center">
+  <img src="docs/2.jpg">
+</p>
+
+<p align="center">
+  <img src="docs/3.jpg">
+</p>
