@@ -19,8 +19,6 @@ This readme describes every step required to get going with your own object dete
 
 The repository provides all the files needed to train &quot;detecting forbidden items&quot; . The tutorial describes how to replace these files with your own files to train a detection classifier for whatever any other model. It also has Python scripts to test your classifier out on an image, video, or webcam feed.
 
-![](RackMultipart20200422-4-4xfm8w_html_d7833a5ee0f15120.jpg)
-
 <p align="center">
   <img src="docs/header.jpg">
 </p>
