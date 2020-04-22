@@ -21,6 +21,10 @@ The repository provides all the files needed to train &quot;detecting forbidden 
 
 ![](RackMultipart20200422-4-4xfm8w_html_d7833a5ee0f15120.jpg)
 
+<p align="center">
+  <img src="doc/header.jpg">
+</p>
+
 ##
 # Introduction
 
