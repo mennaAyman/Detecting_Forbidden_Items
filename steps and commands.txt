@@ -44,6 +44,7 @@ set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensorflow\
 
 // create csv files
 cd C:\tensorflow\models\research\object_detection
+delete these files (images and xml files) : P04029 , P04979 , P05294 , P06012 , P06029 , P06972 , P07353 , P07355 , P07458 , P08077 , P08079 , P08081 , P08083 , P08493
 python xml_to_csv.py  //while there is an error , delete the last file (image and xml) printed in the cmd
 //generate tfrecords
 python generate_tfrecord.py --csv_input=images/train_labels.csv --image_dir=images/train --output_path=train.record
