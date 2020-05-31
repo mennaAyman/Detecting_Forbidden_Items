@@ -1,12 +1,11 @@
-# TensorFlow Lite Object Detection Android Demo
+# TensorFlow Lite Object Detection Android
+
 ### Overview
-This is a camera app that continuously detects the objects (bounding boxes and classes) in the frames seen by your device's back camera, using a quantized [MobileNet SSD](https://github.com/tensorflow/models/tree/master/research/object_detection) model trained on the [COCO dataset](http://cocodataset.org/). These instructions walk you through building and running the demo on an Android device.
+This is a camera app that continuously detects the objects (bounding boxes and classes) in the frames seen by your device's back camera, using a quantized [MobileNet SSD](https://github.com/tensorflow/models/tree/master/research/object_detection) model trained on the [COCO dataset](http://cocodataset.org/). These instructions walk you through building and running the project on an Android device.
 
 The model files are downloaded via Gradle scripts when you build and run. You don't need to do any steps to download TFLite models into the project explicitly.
 
-Application can run either on device or emulator.
-
-<!-- TODO(b/124116863): Add app screenshot. -->
+Application can run either on device or emulator ( the emulator must have a connected camera )
 
 ## Build the demo using Android Studio
 
@@ -18,69 +17,71 @@ Application can run either on device or emulator.
 * Android Studio 3.2 or later.
 
 ### Building
+
+* Clone or download this repo supported by tensorflow [Tensorflow Examples](https://github.com/tensorflow/examples)
+
 * Open Android Studio, and from the Welcome screen, select Open an existing Android Studio project.
 
-* From the Open File or Project window that appears, navigate to and select the tensorflow-lite/examples/object_detection/android directory from wherever you cloned the TensorFlow Lite sample GitHub repo. Click OK.
+* From the Open File or Project window that appears, navigate to and select the tensorflow-lite/examples/object_detection/android directory ( from the downloaded repo ) , Click OK.
 
 * If it asks you to do a Gradle Sync, click OK.
 
-* You may also need to install various platforms and tools, if you get errors like "Failed to find target with hash string 'android-21'" and similar.
-Click the Run button (the green arrow) or select Run > Run 'android' from the top menu. You may need to rebuild the project using Build > Rebuild Project.
+* Also, you need to have an Android device plugged in with developer options enabled at this point.
 
-* If it asks you to use Instant Run, click Proceed Without Instant Run.
+### First you need to export the SSD_Model to tflite
 
-* Also, you need to have an Android device plugged in with developer options enabled at this point. See **[here](https://developer.android.com/studio/run/device)** for more details on setting up developer devices.
+* The model must be SSD model to be converted to tflite
 
-
-### Model used
-Downloading, extraction and placing it in assets folder has been managed automatically by download.gradle.
-
-If you explicitly want to download the model, you can download from **[here](http://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip)**. Extract the zip to get the .tflite and label file.
-
-
-### Custom model used
-This example shows you how to perform TensorFlow Lite object detection using a custom model.
-* Clone the TensorFlow models GitHub repository to your computer.
+* We go to object detection directory 
 ```
-git clone https://github.com/tensorflow/models/
-```
-* Build and install this repository.
-```
-cd models
-python3 setup.py build && python3 setup.py install
-```
-* Download the MobileNet SSD trained on **[Open Images v4](https://storage.googleapis.com/openimages/web/factsfigures_v4.html)** **[here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)**. Extract the pretrained TensorFlow model files.
-* Go to `models/research` directory and execute this code to get the frozen TensorFlow Lite graph.
-```
-python3 object_detection/export_tflite_ssd_graph.py \
-  --pipeline_config_path object_detection/samples/configs/ssd_mobilenet_v2_oid_v4.config \
-  --trained_checkpoint_prefix <directory with ssd_mobilenet_v2_oid_v4_2018_12_12>/model.ckpt \
-  --output_directory exported_model
-```
-* Convert the frozen graph to the TFLite model.
-```
-tflite_convert \
-  --input_shape=1,300,300,3 \
-  --input_arrays=normalized_input_image_tensor \
-  --output_arrays=TFLite_Detection_PostProcess,TFLite_Detection_PostProcess:1,TFLite_Detection_PostProcess:2,TFLite_Detection_PostProcess:3 \
-  --allow_custom_ops \
-  --graph_def_file=exported_model/tflite_graph.pb \
-  --output_file=<directory with the TensorFlow examples repository>/lite/examples/object_detection/android/app/src/main/assets/detect.tflite
-```
-`input_shape=1,300,300,3` because the pretrained model works only with that input shape.
-
-`allow_custom_ops` is necessary to allow TFLite_Detection_PostProcess operation.
-
-`input_arrays` and `output_arrays` can be drawn from the visualized graph of the example detection model.
-```
-bazel run //tensorflow/lite/tools:visualize \
-  "<directory with the TensorFlow examples repository>/lite/examples/object_detection/android/app/src/main/assets/detect.tflite" \
-  detect.html
+cd C:\tensorflow\models\research\object_detection
 ```
 
-* Get `labelmap.txt` from the second column of **[class-descriptions-boxable](https://storage.googleapis.com/openimages/2018_04/class-descriptions-boxable.csv)**.
-* In `DetectorActivity.java` set `TF_OD_API_IS_QUANTIZED` to `false` and in `TFLiteObjectDetectionAPIModel.java` set `labelOffset` to `0`.
+* We export the SSD_Model to tflite
+```
+python export_tflite_ssd_graph.py --pipeline_config_path=training/ssd_mobilenet_v1_pets.config --trained_checkpoint_prefix training/model.ckpt-XXXX --output_directory inference_graph_for_android --add_postprocessing_op True --max_detections 10
+```
+where "XXXX" in "model.ckpt-XXXX" should be replaced with the highest-numbered .ckpt file in the training folder.
 
+### Next we’ll Convert the frozen graph to the TFLite model 
 
-### Additional Note
-_Please do not delete the assets folder content_. If you explicitly deleted the files, then please choose *Build*->*Rebuild* from menu to re-download the deleted model files into assets folder.
+* Do that via running [Convert the frozen graph to the TFLite model.ipynb](https://github.com/mennaAyman/Detecting_Forbidden_Items/blob/master/Convert%20the%20frozen%20graph%20to%20the%20TFLite%20model.ipynb)
+
+### Next we will make text file named (labelmap.txt)
+
+the file contains the names of our objects 
+```
+???
+Knife
+Gun
+Wrench
+Pliers
+Scissors
+```
+
+### Now return to our project on anroid studio and do some changes on it.
+
+* copy the detect.tflite and labelmap.txt files under the assets package in the project
+
+<p align="center">
+  <img src="docs/android.jfif">
+</p>
+
+* Since I choosed the inference type to be float then real-numbers arrays will be of type float in the output file. If they were quantized in the input file, then they get dequantized. So I need to set the value of TF_OD_API_IS_QUANTIZED variable to false in the DetectorActivity.java check the snippet:
+
+```
+  // Configuration values for the prepackaged SSD model.
+	  private static final int TF_OD_API_INPUT_SIZE = 300;
+	  private static final boolean TF_OD_API_IS_QUANTIZED = false;
+	  private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
+	  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
+```
+
+* Also you need to edit the file TFLiteObjectDetectionAPIModel.java to [TFLiteObjectDetectionAPIModel.java](https://github.com/mennaAyman/Detecting_Forbidden_Items/blob/master/TFLiteObjectDetectionAPIModel.java)
+
+* And last but not least got your build.gradle and comment the following line
+```
+//apply from:'download_model.gradle'
+```
+
+* Sync gradle and plug you phone usb and run the app.
