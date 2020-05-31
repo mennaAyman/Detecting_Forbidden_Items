@@ -409,7 +409,7 @@ Pliers
 Scissors
 ```
 
-### Now return to our project on anroid studio and do some changes on it.
+### Now return to our project on android studio and do some changes on it.
 
 * copy the detect.tflite and labelmap.txt files under the assets package in the project
 
@@ -434,4 +434,8 @@ Scissors
 //apply from:'download_model.gradle'
 ```
 
-* Sync gradle and plug you phone usb and run the app.
+* Sync gradle and plug your phone usb and run the app.
+
+<p align="center">
+  <img src="docs/detection.jpg">
+</p>
