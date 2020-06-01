@@ -378,7 +378,7 @@ Application can run either on device or emulator ( the emulator must have a conn
 
 * Also, you need to have an Android device plugged in with developer options enabled at this point.
 
-### First you need to export the SSD_Model to tflite
+### First you need to export the SSD_Model to tflite frozen graph
 
 * The model must be SSD model to be converted to tflite
 
@@ -387,7 +387,7 @@ Application can run either on device or emulator ( the emulator must have a conn
 cd C:\tensorflow\models\research\object_detection
 ```
 
-* We export the SSD_Model to tflite
+* We export the SSD_Model to tflite frozen graph by running this command
 ```
 python export_tflite_ssd_graph.py --pipeline_config_path=training/ssd_mobilenet_v1_pets.config --trained_checkpoint_prefix training/model.ckpt-XXXX --output_directory inference_graph_for_android --add_postprocessing_op True --max_detections 10
 ```
