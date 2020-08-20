@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.Button1.setText(_translate("MainWindow", "Upload image"))
+        self.Button1.setText(_translate("MainWindow", "Upload video"))
         self.Button2.setText(_translate("MainWindow", "Start detection"))
     
 
@@ -136,49 +136,49 @@ class Widget(QtWidgets.QWidget, Ui_MainWindow):
 
 
     def detection(self, MainWindow):
-        image_path = self.fileName
-        print(image_path)
-        text = "Negative"
-        image = cv2.imread(image_path)
-        before = image.copy()
+        PATH_TO_VIDEO = self.fileName
+        # Open video file
+        video = cv2.VideoCapture(PATH_TO_VIDEO)
+        out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 20, (int(video.get(3)), int(video.get(4))) )
 
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_expanded = np.expand_dims(image_rgb, axis=0)
+        while(video.isOpened()):
 
-        # Perform the actual detection by running the model with the image as input
-        (boxes, scores, classes, num) = sess.run(
-            [detection_boxes, detection_scores, detection_classes, num_detections],
-            feed_dict={image_tensor: image_expanded})
+            # Acquire frame and expand frame dimensions to have shape: [1, None, None, 3]
+            # i.e. a single-column array, where each item in the column has the pixel RGB value
+            ret, frame = video.read()
+            if frame is None:
+                break;
+        #     frame=imutils.resize(frame,width=1000)
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_expanded = np.expand_dims(frame_rgb, axis=0)
 
-        scores2 = np.squeeze(scores)
-        for score in scores2:
-            if score >=0.6:
-                text="Positive"
+            # Perform the actual detection by running the model with the image as input
+            (boxes, scores, classes, num) = sess.run(
+                [detection_boxes, detection_scores, detection_classes, num_detections],
+                feed_dict={image_tensor: frame_expanded})
+
+            # Draw the results of the detection (aka 'visulaize the results')
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                frame,
+                np.squeeze(boxes),
+                np.squeeze(classes).astype(np.int32),
+                np.squeeze(scores),
+                category_index,
+                use_normalized_coordinates=True,
+                line_thickness=8,
+                min_score_thresh=0.60)
+
+            out.write(frame)
+
+            frame=imutils.resize(frame,width=1000)
+            cv2.imshow('Object detector', frame)
+
+            if cv2.waitKey(1) == ord('q'):
                 break
 
-
-
-
-        # Draw the results of the detection
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image,
-            np.squeeze(boxes),
-            np.squeeze(classes).astype(np.int32),
-            np.squeeze(scores),
-            category_index,
-            use_normalized_coordinates=True,
-            line_thickness=8,
-            min_score_thresh=0.6)
-
-        if text=="Positive":
-            cv2.putText(image,text,(5, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        else:
-            cv2.putText(image,text,(5, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-        name=image_path.split(".")[0]+"-after.jpg"
-        cv2.imwrite(name,image)
-        cv2.imshow("image", np.hstack([before, image]))
-        cv2.waitKey(0)
+        # Clean up
+        video.release()
+        out.release()
 
         cv2.destroyAllWindows()
         
