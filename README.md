@@ -151,13 +151,7 @@ python C:/tensorflow/models/research/object_detection/builders/model_builder_tes
 
 Now that the TensorFlow Object Detection API is all set up and ready to go, we need to provide the images it will use to train a new detection classifier.
 
-Download the images dataset from
-
-[https://drive.google.com/drive/folders/1HU99JoeUbyQb\_ox4g7GDzr9ZeHkkhGZU](https://drive.google.com/drive/folders/1HU99JoeUbyQb_ox4g7GDzr9ZeHkkhGZU)
-
-Also download the labels for this dataset (xml files) from
-
-[https://drive.google.com/drive/folders/1ErxbdNhQ-PueagYhxzzLT9YjNo82Tkqx](https://drive.google.com/drive/folders/1ErxbdNhQ-PueagYhxzzLT9YjNo82Tkqx)
+Download the images dataset with the annotations from [here](https://github.com/MeioJane/SIXray)
 
 Make a new folder in C:\tensorflow\models\research\object\_detection and name it images. then in images divide it into a test and train folders ( take each image with it&#39;s xml file ) .. We used a 90-10 split
 
