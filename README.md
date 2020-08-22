@@ -117,16 +117,10 @@ C:\> set PYTHONPATH=C:\tensorflow\models;C:\tensorflow\models\research;C:\tensor
 
 #### 2f. Compile Protobufs and run setup.py
 
-Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately, the short protoc compilation command posted on TensorFlow&#39;s Object Detection API [installation page](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) does not work on Windows. Every .proto file in the \object\_detection\protos directory must be called out individually by the command.
+Next, compile the Protobuf files, which are used by TensorFlow to configure model and training parameters. Unfortunately , go [here](https://github.com/protocolbuffers/protobuf/releases/tag/v3.4.0) to download protoc 3.4 , Extract the zip and open the bin folder. Move protoc.exe into the ‘research’ folder of the cloned repository and From the ‘research’ directory run this command to compile protoc:
 
 ```
-C:\> cd C:\tensorflow\models\research
-```
-
-Then copy and paste the following command into the command line and press Enter:
-
-```
-protoc --python_out=. .\object_detection\protos\anchor_generator.proto
+protoc object_detection/protos/*.proto --python_out=.
 ```
 
 This creates a .py file from every .proto file in the \object\_detection\protos folder.
